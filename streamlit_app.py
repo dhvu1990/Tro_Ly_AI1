@@ -2,6 +2,9 @@ import streamlit as st
 from openai import OpenAI
 import os
 
+from datetime import datetime
+import pytz
+
 # Hàm đọc nội dung từ file văn bản
 def rfile(name_file):
     with open(name_file, "r", encoding="utf-8") as file:
@@ -29,7 +32,14 @@ openai_api_key = st.secrets.get("OPENAI_API_KEY")
 client = OpenAI(api_key=openai_api_key)
 
 # Khởi tạo tin nhắn "system" và "assistant"
-INITIAL_SYSTEM_MESSAGE = {"role": "system", "content": rfile("01.system_trainning.txt")}
+tz = pytz.timezone("Asia/Ho_Chi_Minh")
+today_str = datetime.now(tz).strftime("%d/%m/%Y")
+
+INITIAL_SYSTEM_MESSAGE = {
+    "role": "system",
+    "content": rfile("01.system_trainning.txt").replace("{{today}}", today_str)
+}
+
 INITIAL_ASSISTANT_MESSAGE = {"role": "assistant", "content": rfile("02.assistant.txt")}
 
 # Kiểm tra nếu chưa có session lưu trữ thì khởi tạo tin nhắn ban đầu
